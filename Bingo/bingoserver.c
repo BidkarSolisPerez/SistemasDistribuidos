@@ -25,7 +25,7 @@ int main (void) {
     sprintf (update, "%d", bingoNumber);
     printf("%d",bingoNumber);
     s_send (publisher, update);
-    sleep(5);
+    sleep(2);
   }
   zmq_close (publisher); 
   zmq_ctx_destroy (context); 

@@ -1,0 +1,55 @@
+// taskserver.c
+// Task server
+// Binds REP socket to tcp://*:5555
+//
+#include <zhelpers.h>
+#include <stdio.h>
+#include <unistd.h>
+#include <string.h>
+
+int main (void) {
+  void *context = zmq_ctx_new ();
+
+  void *responder = zmq_socket (context, ZMQ_REP); 
+  zmq_bind (responder, "tcp://*:5555");
+
+  char length[20];
+
+  while (1) {
+
+    char* request;
+    request = s_recv(responder);
+    if (request==NULL) continue;
+
+    printf ("Received: %s\n",request);
+
+    char *url = strtok(request," ");
+    url = strtok(NULL," ");
+
+    printf ("URL: %s\n",url);
+
+    free(request);
+    
+    printf("Leer Archivo");
+    
+    char linea[1024];
+    FILE *fich;
+ 
+    fich = fopen("index.html", "r");
+    //Lee línea a línea y escribe en pantalla hasta el fin de fichero
+    while(fgets(linea, 1024, (FILE*) fich)) {
+        printf("%s\n", linea);
+    }
+    fclose(fich);
+
+    char* reply = "Hello World";
+    sprintf(length,"%d",strlen(reply));
+
+    s_sendmore(responder, length);
+    s_send(responder, reply);
+  }
+
+  zmq_close (responder); 
+  zmq_ctx_destroy (context); 
+  return 0;
+}

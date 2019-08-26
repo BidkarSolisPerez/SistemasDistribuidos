@@ -7,13 +7,21 @@
 #include <unistd.h>
 #include <string.h>
 
+long fsize(FILE *fp){
+    long prev=ftell(fp);
+    fseek(fp, 0L, SEEK_END);
+    long sz=ftell(fp);
+    fseek(fp,prev,SEEK_SET); //go back to where we were
+    return sz;
+}
+
 int main (void) {
   void *context = zmq_ctx_new ();
 
   void *responder = zmq_socket (context, ZMQ_REP); 
   zmq_bind (responder, "tcp://*:5555");
 
-  char length[20];
+  char length[2000];
 
   while (1) {
 
@@ -25,24 +33,52 @@ int main (void) {
 
     char *url = strtok(request," ");
     url = strtok(NULL," ");
+    
+    int urlSize = strlen(url);
+    
+    printf("Char size url %d \n",urlSize);
+    
+    char urlFile[urlSize-1];
+    
+    printf("Pos 1 url: %c\n", *(&url[1]));
+    
+
+    for(int i=0; i < urlSize; i++){
+		urlFile[i] = *(&url[i+1]);
+	}
+	
+	
 
     printf ("URL: %s\n",url);
-
-    free(request);
+    printf ("URL file: %s\n",urlFile);
     
-    printf("Leer Archivo");
+    free(request);
+
     
     char linea[1024];
     FILE *fich;
  
-    fich = fopen("index.html", "r");
+    fich = fopen(urlFile, "r");
+	 
+	long fileSize = fsize(fich);
+    
+    printf("Tamano del archivo es: %d\n",fileSize); 
+	   
+    printf("Leer Archivo");
+    
+    char *lect;
+    
     //Lee línea a línea y escribe en pantalla hasta el fin de fichero
     while(fgets(linea, 1024, (FILE*) fich)) {
         printf("%s\n", linea);
+        strcat(lect,linea);
     }
     fclose(fich);
+    
+    printf ("\nLo que dice el archivo es: %s\n",lect);
 
-    char* reply = "Hello World";
+    char* reply = lect;
+    
     sprintf(length,"%d",strlen(reply));
 
     s_sendmore(responder, length);

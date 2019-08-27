@@ -24,7 +24,7 @@ int main (void) {
      id_size = zmq_recv (hserver, id, 256, 0);  
 
      // Get HTTP request  
-     char *request = s_recv(hserver);
+     char *request = s_recv(hserver);  
      free (request);  
 
      request = s_recv(hserver);

@@ -1,10 +1,4 @@
-// rrclient.c
-// Hello World client
-// Connects REQ socket to tcp://localhost:5559 
-// Sends "Hello" to server, expects "World" back 
-//
-#include <zhelpers.h>
-#include <stdlib.h>
+#include "zhelpers.h"
 
 int main (void) {
 
@@ -13,21 +7,18 @@ int main (void) {
   //  Socket to talk to server
   void *requester = zmq_socket (context, ZMQ_REQ); 
   zmq_connect (requester, "tcp://localhost:5559");
-  
-  printf ("Press Enter when the workers are ready: "); 
-  getchar ();
-  printf ("Sending tasks to workers...\n");
-  
   int request_nbr;
+  
+  srandom ((unsigned) time (NULL));	
+  
   for (request_nbr = 0; request_nbr != 10; request_nbr++) {
-	int workload;
-    // Random workload from 1 to 100 msec
-    workload = rand() % 41;  
-    
-    char string [2];
-    sprintf (string, "%d", workload); 
-    s_send (sender, string);
-
+	
+	int factNumber = randof(5);
+	
+	char number [2];
+	sprintf (number, "%d", factNumber);
+	  
+    s_send (requester, number);
     char *string = s_recv (requester);
     printf ("Received reply %d [%s]\n", request_nbr, string); 
     free (string);

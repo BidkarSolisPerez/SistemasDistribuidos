@@ -20,13 +20,14 @@ static void list_dir(const char *path)
         return;
     }
 
+    FILE *fp;
+    fp = fopen ( "archivos.txt", "w" );
+
     while ((entry = readdir(dir)) != NULL) {
-        
 
         char filename[256];
         struct tm *foo;
         struct stat attrib;
-
 
 	    sprintf (filename, "%s", entry->d_name);
 
@@ -36,11 +37,27 @@ static void list_dir(const char *path)
         {
             /* code */
             printf("File name: %s\n",filename);
-            char directory[256] = "C:\\SistemasDistribuidos\\";
 
+            char directory[256] = "D:\\SistemasDistribuidos\\";
             struct stat attr;
             stat(strcat(directory,filename), &attr);
-            printf("Last modified time: %s", ctime(&attr.st_mtime));
+            printf("Last modified time: %s\n", ctime(&attr.st_mtime));
+
+            
+            if(!S_ISDIR(attr.st_mode)){
+                printf("Es un archivo\n");
+                printf("Preparando para escribir en archivo\n");
+	            
+                fp = fopen ( "archivos.txt", "a" );        
+            
+	            if (fp==NULL) {
+                    printf("Error al crear o leer el archivo\n");
+                }else{
+                    printf("Escribiendo...\n\n");
+                    fputs(strcat(filename, "\t"),fp);
+                    fputs("\n",fp);
+                }
+            }
 
             /*
             struct stat t_stat;
@@ -48,7 +65,7 @@ static void list_dir(const char *path)
             struct tm * timeinfo = localtime(&t_stat.st_ctime); // or gmtime() depending on what you want
             printf("File time and date: %s\n", asctime(timeinfo));*/
         }
-
+        fclose ( fp );
     }
 
     closedir(dir);
@@ -60,7 +77,7 @@ int main(int argc, char *argv[]){
     printf("Hello %s!!\n",argv[2]);
 
 
-    list_dir("C:\\SistemasDistribuidos");
+    list_dir("D:\\SistemasDistribuidos");
 
 
 

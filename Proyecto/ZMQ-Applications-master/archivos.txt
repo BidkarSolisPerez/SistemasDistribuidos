@@ -1,0 +1,8 @@
+.gitattributes	
+apache-maven-3.6.1-bin.zip	
+bingo2client.c	
+bingo2server.c	
+BingoSendMessageback.7z	
+Importante.txt	
+qpid-jms-master.zip	
+ZMQ-Applications-master.zip	

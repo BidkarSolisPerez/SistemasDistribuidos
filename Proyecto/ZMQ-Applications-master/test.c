@@ -11,6 +11,14 @@
 #include <sys/stat.h>
 #include <time.h>
 
+int fsize(FILE *fp){
+    int prev=ftell(fp);
+    fseek(fp, 0L, SEEK_END);
+    int sz=ftell(fp);
+    fseek(fp,prev,SEEK_SET); //go back to where we were
+    return sz;
+}
+
 static void list_dir(const char *path)
 {
     struct dirent *entry;
@@ -42,20 +50,40 @@ static void list_dir(const char *path)
             struct stat attr;
             stat(strcat(directory,filename), &attr);
             printf("Last modified time: %s\n", ctime(&attr.st_mtime));
+            //para comparar tiempos: https://stackoverflow.com/questions/31633943/compare-two-times-in-c
 
-            
             if(!S_ISDIR(attr.st_mode)){
                 printf("Es un archivo\n");
                 printf("Preparando para escribir en archivo\n");
 	            
-                fp = fopen ( "archivos.txt", "a" );        
-            
+                fp = fopen ( "archivos.txt", "a" );
+
+                char* fileDir = directory;
+                printf("Leyendo desde: %s\n",fileDir);
+
+                FILE *fpFileSize;
+                fpFileSize = fopen(fileDir,"r");
+
+                char fileSize[50];
+
+            if(fpFileSize == NULL){
+                printf("Error al leer archivo\n");
+            }else{
+
+                printf("Preparando para sacar el tamano del archivo\n");
+                int size = fsize(fpFileSize);
+                printf("El tamano es: %d\n",size); 
+                itoa(size,fileSize,10);
+            }
+
+
 	            if (fp==NULL) {
                     printf("Error al crear o leer el archivo\n");
                 }else{
                     printf("Escribiendo...\n\n");
                     fputs(strcat(filename, "\t"),fp);
-                    fputs("\n",fp);
+                    fputs(strcat(fileSize, "\t"),fp);
+                    fputs(ctime(&attr.st_mtime),fp);
                 }
             }
 

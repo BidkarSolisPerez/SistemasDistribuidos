@@ -51,6 +51,35 @@ static void list_dir(const char *path)
             stat(strcat(directory,filename), &attr);
             printf("Last modified time: %s\n", ctime(&attr.st_mtime));
             //para comparar tiempos: https://stackoverflow.com/questions/31633943/compare-two-times-in-c
+            printf("Valor del struct: %d\n",attr.st_mtime);
+
+            char sDateModified[15];
+
+            // convert 123 to string [buf]
+            itoa(attr.st_mtime, sDateModified, 10);
+
+            printf("Comparando fechas:\n");
+            //https://www.ibm.com/support/knowledgecenter/en/ssw_ibm_i_74/rtref/strpti.htm
+
+/*
+            char buf[21] = "MonSep0913:11:482019"; 
+
+            struct tm *result;
+
+    if (strptime(buf, "%a %b %d %H:%M:%S %Y",&result) == NULL)
+          printf("\nstrptime failed\n");
+    else
+    {
+          printf("tm_hour:  %d\n",result.tm_hour);
+          printf("tm_min:  %d\n",result.tm_min);
+          printf("tm_sec:  %d\n",result.tm_sec);
+          printf("tm_mon:  %d\n",result.tm_mon);
+          printf("tm_mday:  %d\n",result.tm_mday);
+          printf("tm_year:  %d\n",result.tm_year);
+          printf("tm_yday:  %d\n",result.tm_yday);
+          printf("tm_wday:  %d\n",result.tm_wday);
+    }
+*/
 
             if(!S_ISDIR(attr.st_mode)){
                 printf("Es un archivo\n");
@@ -83,7 +112,7 @@ static void list_dir(const char *path)
                     printf("Escribiendo...\n\n");
                     fputs(strcat(filename, "\t"),fp);
                     fputs(strcat(fileSize, "\t"),fp);
-                    fputs(ctime(&attr.st_mtime),fp);
+                    fputs(strcat(sDateModified,"\n"),fp);
                 }
             }
 

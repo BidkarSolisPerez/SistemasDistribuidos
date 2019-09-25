@@ -7,38 +7,45 @@ int main (void) {
   void *context = zmq_ctx_new ();
 
   //  First, connect our subscriber socket
-  void *subscriber = zmq_socket (context, ZMQ_SUB); 
-  zmq_connect (subscriber, "tcp://localhost:5561"); 
+  void *subscriber = zmq_socket (context, ZMQ_SUB);
+  zmq_connect (subscriber, "tcp://localhost:5561");
   zmq_setsockopt (subscriber, ZMQ_SUBSCRIBE, "", 0);
 
   //  0MQ is so fast, we need to wait a while...
-  sleep (1);
+  s_sleep (1);
 
   //  Second, synchronize with publisher
-  void *syncclient = zmq_socket (context, ZMQ_REQ); 
+  void *syncclient = zmq_socket (context, ZMQ_REQ);
   zmq_connect (syncclient, "tcp://localhost:5562");
-
+  //  Initialize random number generator
+  srandom ((unsigned) time (NULL));
+  int randomNumber;
+  randomNumber = rand();
+  char numberasstring [10];
+    sprintf (numberasstring, "%d", randomNumber);
   //  - send a synchronization request
-  s_send (syncclient, "");
+  s_send (syncclient, numberasstring);
 
   //  - wait for synchronization reply
-  char *string = s_recv (syncclient); 
+  char *string = s_recv (syncclient);
   free (string);
 
   //  Third, get our updates and report how many we got
-  int update_nbr = 0; 
+  int update_nbr = 0;
   while (1) {
-    char *string = s_recv (subscriber); 
+    char *string = s_recv (subscriber);
     if (strcmp (string, "END") == 0) {
       free (string);
-      break; 
+      break;
     }
+printf("Numero Mayor: %s",string);
     free (string);
     update_nbr++;
   }
-  printf ("Received %d updates\n", update_nbr);
-  zmq_close (subscriber); 
-  zmq_close (syncclient); 
-  zmq_ctx_destroy (context); 
+  printf ("Received %d updates\n", update_nbr);  
+  zmq_close (subscriber);
+  zmq_close (syncclient);
+  zmq_ctx_destroy (context);
+  getchar();
   return 0;
 }

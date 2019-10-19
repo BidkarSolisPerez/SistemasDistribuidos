@@ -48,7 +48,7 @@ int main(void)
 
     line = s_recv(tserver);
     sscanf(line, "%d", &length);
-    sprintf(http_response + 74, "%d\n\n", length);
+    sprintf(http_response, "%d\n\n", length);
 
     zmq_send(hserver, id, id_size, ZMQ_SNDMORE);
     zmq_send(hserver, http_response,

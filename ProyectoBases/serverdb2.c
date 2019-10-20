@@ -28,6 +28,7 @@ int main(int argc, char *argv[])
     sqlite3 *db;
     char *err_msg = 0;
 
+    printf("Servidor en espera de la inforamcion para procesar la consulta a la base de datos");
     //  Process 100 updates
     while (1)
     {

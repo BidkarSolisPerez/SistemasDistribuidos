@@ -49,7 +49,7 @@ int main(int argc, char *argv[])
             if (id != NULL)
             {
                 printf("Es de tipo get\n");
-                int rcdb = sqlite3_open("Test.db", &db);
+                int rcdb = sqlite3_open("Test2.db", &db);
 
                 printf("Valor rc: %d\n", rcdb);
                 if (rc != SQLITE_OK)
@@ -84,7 +84,7 @@ int main(int argc, char *argv[])
             else
             {
                 printf("Es de tipo get\n");
-                int rcdb = sqlite3_open("Test.db", &db);
+                int rcdb = sqlite3_open("Test2.db", &db);
 
                 printf("Valor rc: %d\n", rcdb);
                 if (rc != SQLITE_OK)
@@ -126,7 +126,7 @@ int main(int argc, char *argv[])
         else if (strcmp(requestType, "DELETE") == 0)
         {
             printf("Es de tipo delete\n");
-            int rcdb = sqlite3_open("Test.db", &db);
+            int rcdb = sqlite3_open("Test2.db", &db);
 
             printf("Valor rc: %d\n", rcdb);
             if (rc != SQLITE_OK)

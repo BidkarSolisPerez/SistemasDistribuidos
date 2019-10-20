@@ -54,10 +54,20 @@ char *replaceWord(const char *s, const char *oldW,
 
 int main(void)
 {
+    //Context
     void *context = zmq_ctx_new();
 
+    //Socket para comunicar con el adapter
     void *responder = zmq_socket(context, ZMQ_REP);
     zmq_bind(responder, "tcp://*:5555");
+
+    //Socket Publisher
+    void *contextPub = zmq_ctx_new();
+    void *publisher = zmq_socket(contextPub, ZMQ_PUB);
+    int rc = zmq_bind(publisher, "tcp://*:5556");
+    //assert(rc == 0);
+    rc = zmq_bind(publisher, "ipc://weather.ipc");
+    //assert(rc == 0);
 
     char length[20];
 
@@ -71,15 +81,41 @@ int main(void)
 
         printf("Received in coordinator: %s\n", request);
         char *url = strtok(request, " ");
+        char *requestType;
+        char *id;
+        requestType = url;
 
-        printf("Request despues del strtok: %s\n", url);
+        printf("Request despues del primer strtok: %s\n", url);
         url = strtok(NULL, " ");
+
+        printf("Tipo de request: %s\n", requestType);
+
+        url = strtok(url, "/");
+        printf("Request despues del segundo strtok: %s\n", url);
+
+        url = strtok(NULL, "/");
+        printf("Request despues del tercer strtok: %s\n", url);
+
+        id = strtok(NULL, "/");
+        printf("Valor de ID: %s\n", id);
+
         printf("Request despues del strtok con NULL: %s\n", url);
+        url = replaceWord(url, "%7B", "");
+        url = replaceWord(url, "%7D", "");
 
-        url = replaceWord(url, "/", "");
-        printf("Url despues de replace: %s", url);
+        strcat(requestType, ",");
+        strcat(requestType, url);
 
-        printf("URL final: %s\n", url);
+        if (id != NULL)
+        {
+            strcat(requestType, id);
+        }
+
+        printf("Url despues de replace: %s\n", url);
+        printf("Statement: %s\n", requestType);
+
+        //Envia publisher
+        s_send(publisher, requestType);
 
         free(request);
 
@@ -91,6 +127,8 @@ int main(void)
     }
 
     zmq_close(responder);
+    zmq_close(publisher);
     zmq_ctx_destroy(context);
+    zmq_ctx_destroy(contextPub);
     return 0;
 }

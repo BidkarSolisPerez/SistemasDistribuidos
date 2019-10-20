@@ -76,6 +76,8 @@ int main(void)
 
         char *request;
         request = s_recv(responder);
+        request = replaceWord(request, "%7B", "");
+        request = replaceWord(request, "%7D", "");
         if (request == NULL)
             continue;
 
@@ -100,14 +102,15 @@ int main(void)
         printf("Valor de ID: %s\n", id);
 
         printf("Request despues del strtok con NULL: %s\n", url);
-        url = replaceWord(url, "%7B", "");
-        url = replaceWord(url, "%7D", "");
+        //url = replaceWord(url, "%7B", "");
+        //url = replaceWord(url, "%7D", "");
 
         strcat(requestType, ",");
         strcat(requestType, url);
 
         if (id != NULL)
         {
+            strcat(requestType, ",");
             strcat(requestType, id);
         }
 

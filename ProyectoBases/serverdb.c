@@ -42,40 +42,78 @@ int main(int argc, char *argv[])
         printf("Valores del query: %s\n", values);
 
         char *id = strtok(NULL, ",");
-        printf("Valor de id: %s", id);
+        printf("Valor de id: %s\n", id);
 
         if (strcmp(requestType, "GET") == 0)
         {
-            printf("Es de tipo get\n");
-            int rcdb = sqlite3_open("Test.db", &db);
-
-            printf("Valor rc: %d\n", rcdb);
-            if (rc != SQLITE_OK)
+            if (id != NULL)
             {
-                fprintf(stderr, "Cannot open database: %s\n",
-                        sqlite3_errmsg(db));
+                printf("Es de tipo get\n");
+                int rcdb = sqlite3_open("Test.db", &db);
+
+                printf("Valor rc: %d\n", rcdb);
+                if (rc != SQLITE_OK)
+                {
+                    fprintf(stderr, "Cannot open database: %s\n",
+                            sqlite3_errmsg(db));
+                    sqlite3_close(db);
+                    return 1;
+                }
+
+                char sql[100] = "SELECT * FROM ";
+                printf("SQL: %s\n", sql);
+
+                strcat(sql, values);
+                strcat(sql, " where id = ");
+                strcat(sql, id);
+
+                printf("Statement: %s\n", sql);
+                rcdb = sqlite3_exec(db, sql, callback, 0, &err_msg);
+
+                if (rcdb != SQLITE_OK)
+                {
+                    fprintf(stderr, "Failed to select data\n");
+                    fprintf(stderr, "SQL error: %s\n", err_msg);
+                    sqlite3_free(err_msg);
+                    sqlite3_close(db);
+                    return 1;
+                }
+
                 sqlite3_close(db);
-                return 1;
             }
-
-            char sql[100] = "SELECT * FROM ";
-            printf("SQL: %s\n", sql);
-
-            strcat(sql, values);
-
-            printf("Statement: %s\n", sql);
-            rcdb = sqlite3_exec(db, sql, callback, 0, &err_msg);
-
-            if (rcdb != SQLITE_OK)
+            else
             {
-                fprintf(stderr, "Failed to select data\n");
-                fprintf(stderr, "SQL error: %s\n", err_msg);
-                sqlite3_free(err_msg);
-                sqlite3_close(db);
-                return 1;
-            }
+                printf("Es de tipo get\n");
+                int rcdb = sqlite3_open("Test.db", &db);
 
-            sqlite3_close(db);
+                printf("Valor rc: %d\n", rcdb);
+                if (rc != SQLITE_OK)
+                {
+                    fprintf(stderr, "Cannot open database: %s\n",
+                            sqlite3_errmsg(db));
+                    sqlite3_close(db);
+                    return 1;
+                }
+
+                char sql[100] = "SELECT * FROM ";
+                printf("SQL: %s\n", sql);
+
+                strcat(sql, values);
+
+                printf("Statement: %s\n", sql);
+                rcdb = sqlite3_exec(db, sql, callback, 0, &err_msg);
+
+                if (rcdb != SQLITE_OK)
+                {
+                    fprintf(stderr, "Failed to select data\n");
+                    fprintf(stderr, "SQL error: %s\n", err_msg);
+                    sqlite3_free(err_msg);
+                    sqlite3_close(db);
+                    return 1;
+                }
+
+                sqlite3_close(db);
+            }
         }
         else if (strcmp(requestType, "POST") == 0)
         {

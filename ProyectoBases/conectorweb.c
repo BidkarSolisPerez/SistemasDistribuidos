@@ -42,7 +42,7 @@ int main(void)
     free(request);
 
     request = s_recv(hserver);
-    printf("3: valor del request %s\n", request);
+    printf("3: valor del request %s Perros ending\n", request);	
 
     char http_response[] =
         "HTTP/1.0 200 OK\n"

@@ -1,0 +1,9 @@
+gcc serverdb.c -o serverdb.exe -Iinclude -Llib -lzmq -lsqlite3-64
+
+http://localhost:8080/records/curso/id_curso=15&nombre_curso='Testeando'&nombre_coordinador='Test'&ciclo_disponible=7&creditos=5
+
+http://localhost:8080/records/profesor/id=15&nombre='Testeando'&grado_academico='Test'&email='7@test.com'&telefono='5'
+
+http://localhost:8080/records/escuela/id_escuela=15&nombre_escuela='Testeando'&nombre_director='Test'&facultad_pertenece='Info'
+
+http://localhost:8080/records/estudiante/id_estudiante=15&nombre='Testeando'&edad=15&email='test@test.com'&phone='5'
